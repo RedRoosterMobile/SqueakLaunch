@@ -17,7 +17,7 @@ const errorsFor = (mutate) => {
 };
 
 test('built-in levels validate', () => {
-  for (const n of [1, 2, 3]) {
+  for (const n of [1, 2, 3, 4, 5, 6]) {
     const r = parseLevelJson(readFileSync(new URL(`../src/levels/level${n}.json`, import.meta.url), 'utf8'));
     assert.equal(r.ok, true, r.errors.join());
   }

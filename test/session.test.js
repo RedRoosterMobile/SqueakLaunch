@@ -98,6 +98,9 @@ const SOLUTIONS = {
   1: [[8, 4, 'up']],
   2: [[5, 8, 'up'], [7, 6, 'up'], [7, 4, 'left']],
   3: [[0, 7, 'right'], [10, 7, 'up'], [10, 3, 'left']],
+  4: [[6, 3, 'down'], [9, 0, 'down'], [11, 0, 'left'], [11, 8, 'up']],
+  5: [[9, 5, 'up'], [5, 8, 'up'], [7, 6, 'up'], [7, 4, 'left']],
+  6: [[0, 6, 'right'], [11, 1, 'left'], [2, 0, 'down'], [7, 1, 'down']],
 };
 
 for (const [n, arrows] of Object.entries(SOLUTIONS)) {

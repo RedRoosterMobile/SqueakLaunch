@@ -61,6 +61,9 @@ Play states are **Placement → Running ⇄ Paused → Won / Lost**. You can onl
 1. **First Launch**: tutorial. One mouse, one arrow.
 2. **The Long Way In**: two mice and a walled maze. Both mice share the same arrows.
 3. **Whisker Watch**: a patrolling cat blocks the obvious shortcut, so you need a safer route.
+4. **Cat Detour**: a cat races down a corridor toward the rocket. Use an arrow to park it in a side pocket while the mice take the long way.
+5. **Guarded Core**: the level 2 maze again, but a cat now prowls the inner ring and will follow your arrows into the rocket unless you pin it down.
+6. **Rush Hour**: three mice, two cats and two rockets. Needs at least 4 well-placed arrows.
 
 ## Level editor
 
