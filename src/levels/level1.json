@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "name": "First Launch",
+  "width": 12,
+  "height": 9,
+  "walls": [],
+  "rockets": [
+    {
+      "x": 8,
+      "y": 2
+    }
+  ],
+  "mice": [
+    {
+      "x": 1,
+      "y": 4,
+      "direction": "right"
+    }
+  ],
+  "cats": [],
+  "arrowInventory": {
+    "up": 1,
+    "right": 1,
+    "down": 0,
+    "left": 0
+  }
+}

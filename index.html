@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Squeak Launch — a mouse-routing puzzle</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+</head>
+<body>
+  <div id="app">
+    <header class="topbar">
+      <div class="logo" aria-label="Squeak Launch">SQUEAK<span>LAUNCH</span></div>
+      <div class="mode-badge" id="mode-badge">PLAY MODE</div>
+    </header>
+
+    <main class="layout">
+      <section class="stage">
+        <div class="stage-head">
+          <h1 id="level-title">—</h1>
+          <span class="pill" id="status-pill">PLACEMENT</span>
+          <span class="saved" id="saved-count" title="Saved mice / total mice">🐭 0 / 0</span>
+        </div>
+        <div id="board-frame">
+          <div id="game"></div>
+          <div id="toast" role="status" aria-live="polite"></div>
+          <div id="result-overlay" hidden>
+            <div class="result-card">
+              <div class="result-title" id="result-title"></div>
+              <p class="result-text" id="result-text"></p>
+              <div class="result-actions" id="result-actions"></div>
+            </div>
+          </div>
+        </div>
+        <p id="level-hint" class="level-hint" hidden></p>
+      </section>
+
+      <aside class="sidebar">
+        <!-- ======================= PLAY PANEL ======================= -->
+        <div id="play-panel">
+          <section class="panel">
+            <label class="field">
+              <span>Level</span>
+              <select id="level-select"></select>
+            </label>
+          </section>
+
+          <section class="panel">
+            <div class="btn-row">
+              <button id="btn-start" class="btn primary">Start</button>
+              <button id="btn-reset" class="btn">Reset</button>
+              <button id="btn-clear" class="btn">Clear Arrows</button>
+            </div>
+          </section>
+
+          <section class="panel">
+            <h2>Arrows <small>pick one, then click a tile</small></h2>
+            <div class="inventory" id="inventory">
+              <button class="arrow-btn" data-tool="up" style="--c: var(--up)"><span class="glyph">▲</span><span class="count" data-count="up">0</span><kbd>1</kbd></button>
+              <button class="arrow-btn" data-tool="right" style="--c: var(--right)"><span class="glyph">▶</span><span class="count" data-count="right">0</span><kbd>2</kbd></button>
+              <button class="arrow-btn" data-tool="down" style="--c: var(--down)"><span class="glyph">▼</span><span class="count" data-count="down">0</span><kbd>3</kbd></button>
+              <button class="arrow-btn" data-tool="left" style="--c: var(--left)"><span class="glyph">◀</span><span class="count" data-count="left">0</span><kbd>4</kbd></button>
+              <button class="arrow-btn eraser" data-tool="eraser" style="--c: var(--bad)"><span class="glyph">✖</span><span class="count">Eraser</span><kbd>E</kbd></button>
+            </div>
+          </section>
+
+          <section class="panel">
+            <button id="btn-to-editor" class="btn wide accent">Switch to Editor</button>
+            <button id="btn-back-to-editor" class="btn wide accent" hidden>◀ Back to Editor</button>
+          </section>
+
+          <details class="panel help" open>
+            <summary>How to play</summary>
+            <ul>
+              <li><b>Goal:</b> get every <b class="t-mouse">mouse</b> into a <b class="t-rocket">rocket</b>.</li>
+              <li>Mice step every ¼ s; <b class="t-cat">cats</b> move at half speed.</li>
+              <li>Blocked? Creatures turn clockwise. Arrows redirect mice <i>and</i> cats.</li>
+              <li>Lose if a cat catches any mouse or reaches a rocket.</li>
+              <li>Place arrows before pressing Start. Reset keeps your arrows.</li>
+            </ul>
+            <dl class="keys">
+              <dt>1–4</dt><dd>Select ▲ ▶ ▼ ◀</dd>
+              <dt>E</dt><dd>Eraser</dd>
+              <dt>Space</dt><dd>Start / Pause / Resume</dd>
+              <dt>R</dt><dd>Reset</dd>
+              <dt>Right-click</dt><dd>Remove arrow</dd>
+            </dl>
+          </details>
+        </div>
+
+        <!-- ======================= EDITOR PANEL ======================= -->
+        <div id="editor-panel" hidden>
+          <section class="panel">
+            <h2>Palette</h2>
+            <div class="palette" id="palette">
+              <button class="tool-btn" data-tool="floor"><span class="swatch sw-floor"></span>Floor / Eraser</button>
+              <button class="tool-btn" data-tool="wall"><span class="swatch sw-wall"></span>Wall</button>
+              <button class="tool-btn" data-tool="rocket"><span class="swatch sw-rocket"></span>Rocket</button>
+              <button class="tool-btn" data-tool="mouse"><span class="swatch sw-mouse"></span>Mouse</button>
+              <div class="dir-picker" data-for="mouse" aria-label="Mouse initial direction">
+                <button data-dir="up">▲</button><button data-dir="right">▶</button><button data-dir="down">▼</button><button data-dir="left">◀</button>
+              </div>
+              <button class="tool-btn" data-tool="cat"><span class="swatch sw-cat"></span>Cat</button>
+              <div class="dir-picker" data-for="cat" aria-label="Cat initial direction">
+                <button data-dir="up">▲</button><button data-dir="right">▶</button><button data-dir="down">▼</button><button data-dir="left">◀</button>
+              </div>
+            </div>
+            <p class="hint">Click to stamp · drag to paint walls/floor · right-click erases</p>
+          </section>
+
+          <section class="panel">
+            <label class="field">
+              <span>Level name</span>
+              <input id="ed-name" type="text" maxlength="60" autocomplete="off" />
+            </label>
+            <h2>Starting arrows</h2>
+            <div class="inv-fields">
+              <label style="--c: var(--up)"><span>▲ Up</span><input type="number" min="0" max="99" step="1" data-inv="up" /></label>
+              <label style="--c: var(--right)"><span>▶ Right</span><input type="number" min="0" max="99" step="1" data-inv="right" /></label>
+              <label style="--c: var(--down)"><span>▼ Down</span><input type="number" min="0" max="99" step="1" data-inv="down" /></label>
+              <label style="--c: var(--left)"><span>◀ Left</span><input type="number" min="0" max="99" step="1" data-inv="left" /></label>
+            </div>
+          </section>
+
+          <section class="panel">
+            <div class="btn-grid">
+              <button id="ed-new" class="btn">New Level</button>
+              <button id="ed-test" class="btn primary">Test Level</button>
+              <button id="ed-import" class="btn">Import Level</button>
+              <button id="ed-export" class="btn">Export Level</button>
+            </div>
+            <div id="ed-status" class="ed-status"></div>
+          </section>
+
+          <section class="panel">
+            <button id="btn-to-play" class="btn wide accent">Return to Play</button>
+          </section>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <!-- Export / Import dialog -->
+  <dialog id="json-dialog" class="dialog">
+    <form method="dialog" class="dialog-inner" id="json-form">
+      <h2 id="json-title">Level JSON</h2>
+      <p class="hint" id="json-hint"></p>
+      <textarea id="json-text" spellcheck="false" autocomplete="off"></textarea>
+      <div id="json-file-row" class="file-row">
+        <label class="btn">Choose JSON file…<input type="file" id="json-file" accept=".json,application/json" hidden /></label>
+        <span id="json-file-name" class="hint"></span>
+      </div>
+      <ul id="json-errors" class="errors"></ul>
+      <div class="dialog-msg" id="json-msg" role="status"></div>
+      <div class="btn-row end" id="json-actions"></div>
+    </form>
+  </dialog>
+
+  <!-- Confirm dialog -->
+  <dialog id="confirm-dialog" class="dialog small">
+    <form method="dialog" class="dialog-inner">
+      <h2>Discard draft?</h2>
+      <p id="confirm-text"></p>
+      <div class="btn-row end">
+        <button class="btn" value="cancel">Keep editing</button>
+        <button class="btn danger" value="ok">Discard</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
