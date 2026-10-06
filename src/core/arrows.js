@@ -1,5 +1,5 @@
 // Player arrow layout + inventory rules. Pure JS.
-import { DIRECTIONS, cellKey, inBounds, isDirection } from './constants.js';
+import { cellKey, inBounds, isDirection } from './constants.js';
 
 export class ArrowLayout {
   constructor(level) {
@@ -56,9 +56,5 @@ export class ArrowLayout {
 
   get placedCount() {
     return this.arrows.size;
-  }
-
-  static get directions() {
-    return DIRECTIONS;
   }
 }
