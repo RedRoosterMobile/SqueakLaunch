@@ -23,7 +23,12 @@ export class BoardScene extends Phaser.Scene {
     this.lossMarkers = [];
   }
 
+  preload() {
+    this.load.audio('background-music', `${import.meta.env.BASE_URL}Mouse Pilot Missions.m4a`);
+  }
+
   create() {
+    this.sound.play('background-music', { loop: true });
     this.input.mouse?.disableContextMenu();
     this.floor = this.add.graphics();
     drawFloor(this.floor, GRID_WIDTH, GRID_HEIGHT);
