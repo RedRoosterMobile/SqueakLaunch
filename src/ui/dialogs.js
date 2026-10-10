@@ -86,7 +86,7 @@ export function openExportDialog(level, onSaved) {
  * Paste JSON or choose a file; validated before `onImport(level)` is called.
  * `onImport` may return/resolve false to keep the dialog open (e.g. user cancelled a confirm).
  */
-export function openImportDialog(onImport) {
+export function openImportDialog(onImport, onError = () => {}) {
   const { dialog, textarea, actions } = setupJsonDialog({
     title: 'Import Level',
     hint: 'Paste level JSON below or choose a .json file. Your draft is only replaced if the level is valid.',
@@ -103,17 +103,20 @@ export function openImportDialog(onImport) {
       textarea.value = await file.text();
       setMessage('File loaded — press Import to validate and load it.');
     } catch {
+      onError();
       setMessage('Could not read that file.', 'bad');
     }
   };
   const doImport = async () => {
     const errorsList = $('#json-errors');
     if (!textarea.value.trim()) {
+      onError();
       setMessage('Paste some JSON or choose a file first.', 'bad');
       return;
     }
     const result = parseLevelJson(textarea.value);
     if (!result.ok) {
+      onError();
       errorsList.replaceChildren(...result.errors.map((e) => el('li', { textContent: e })));
       setMessage(`Import failed (${result.errors.length} problem${result.errors.length === 1 ? '' : 's'}). Your current draft is unchanged.`, 'bad');
       return;

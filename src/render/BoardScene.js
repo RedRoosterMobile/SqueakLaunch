@@ -4,6 +4,7 @@ import * as Phaser from 'phaser';
 import { GRID_WIDTH, GRID_HEIGHT, cellKey, parseKey, DIRECTIONS } from '../core/constants.js';
 import { planMove, catsMoveOnTick } from '../core/simulation.js';
 import { PlayState } from '../core/session.js';
+import { SFX_VOLUMES, tickSound } from './sounds.js';
 import { TILE, COLORS, ARROW_COLORS } from './theme.js';
 import {
   drawFloor, drawWall, drawRocket, drawArrow, drawMouse, drawCat, drawFacingMarker, drawCellOutline, drawCross,
@@ -21,14 +22,18 @@ export class BoardScene extends Phaser.Scene {
     this.animTime = 0;
     this.rocketBoost = new Map(); // cellKey -> remaining ms
     this.lossMarkers = [];
+    this.lastSoundAt = new Map();
   }
 
   preload() {
     this.load.audio('background-music', `${import.meta.env.BASE_URL}Mouse Pilot Missions.m4a`);
+    for (const name of Object.keys(SFX_VOLUMES)) {
+      this.load.audio(`sfx-${name}`, `${import.meta.env.BASE_URL}sfx/${name}.wav`);
+    }
   }
 
   create() {
-    this.sound.play('background-music', { loop: true });
+    this.sound.play('background-music', { loop: true, volume: .35 });
     this.input.mouse?.disableContextMenu();
     this.floor = this.add.graphics();
     drawFloor(this.floor, GRID_WIDTH, GRID_HEIGHT);
@@ -59,6 +64,15 @@ export class BoardScene extends Phaser.Scene {
       this.app.handleBoardPointerUp();
     });
     this.app.onSceneReady(this);
+  }
+
+  playSfx(name) {
+    // Don't queue noises made before the browser's first audio-unlocking gesture.
+    if (this.sound.locked || !this.cache.audio.exists(`sfx-${name}`)) return;
+    const now = this.time.now;
+    if (now - (this.lastSoundAt.get(name) ?? -Infinity) < 60) return;
+    this.lastSoundAt.set(name, now);
+    this.sound.play(`sfx-${name}`, { volume: SFX_VOLUMES[name] });
   }
 
   /** Called by the app whenever a session is created or reset. */
@@ -180,6 +194,8 @@ export class BoardScene extends Phaser.Scene {
   }
 
   playTickEffects(session, events) {
+    const sound = tickSound(events);
+    if (sound) this.playSfx(sound);
     const { sim } = session;
     for (const id of events.saved) {
       const m = sim.mice.find((mm) => mm.id === id);

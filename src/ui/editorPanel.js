@@ -39,10 +39,12 @@ export function bindEditorPanel(app) {
   $('#ed-export').addEventListener('click', () => {
     const result = app.editor.validate();
     if (!result.ok) {
+      app.playSfx('error');
       app.ui.toast('Only valid levels can be exported — see the problems listed.', 'bad');
       return;
     }
     openExportDialog(result.level, () => {
+      app.playSfx('confirm');
       app.editor.markSaved();
       app.refresh();
     });
@@ -53,7 +55,7 @@ export function bindEditorPanel(app) {
       app.importLevel(level);
       app.ui.toast(`Imported "${level.name}".`, 'good');
       return true;
-    });
+    }, () => app.playSfx('error'));
   });
   $('#btn-to-play').addEventListener('click', () => app.returnToPlay());
 

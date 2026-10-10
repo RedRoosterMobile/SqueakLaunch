@@ -1,7 +1,7 @@
 # Squeak Launch
 
 A grid-based puzzle game where you place directional arrows to guide mice into rockets while keeping cats away.
-It's inspired by the classic "mice, cats and rockets" arcade puzzlers. All names, visuals and levels are original, and every graphic is drawn at runtime with Phaser Graphics, so there are no external assets or services.
+It's inspired by the classic "mice, cats and rockets" arcade puzzlers. All names, visuals and levels are original, and every graphic is drawn at runtime with Phaser Graphics, so there are no external graphics or services.
 
 Built with **Phaser 4.2.1**, plain JavaScript ES modules and **Vite 8**, on **Node.js 26**.
 
@@ -64,6 +64,12 @@ Play states are **Placement → Running ⇄ Paused → Won / Lost**. You can onl
 4. **Cat Detour**: a cat races down a corridor toward the rocket. Use an arrow to park it in a side pocket while the mice take the long way.
 5. **Guarded Core**: the level 2 maze again, but a cat now prowls the inner ring and will follow your arrows into the rocket unless you pin it down.
 6. **Rush Hour**: three mice, two cats and two rockets. Needs at least 4 well-placed arrows.
+
+## Audio
+
+Original retro sound effects live in `public/sfx/`. Regenerate them with `python3 scripts/generate-sfx.py` (Python standard library only). Effect volumes are in `src/render/sounds.js`; background music plays at 35% volume so feedback stays audible.
+
+Effects cover arrow editing/errors, start/pause/resume/reset, level/tool changes, rescues, victory, cat attacks/hijacks, editor stamping/erasing, and import/export feedback. Simultaneous rescues share one cue; the final rescue uses the victory jingle. Cat failures use their specific chomp/alarm instead of stacking a generic loss sting. Repeated effects are rate-limited, and no-op edits stay silent. Browser audio unlocks after interaction.
 
 ## Level editor
 
