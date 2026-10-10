@@ -1,4 +1,23 @@
+# Dependencies and build output
 node_modules/
 dist/
-.DS_Store
+coverage/
+
+# Local environment files (keep shareable examples)
+.env
+.env.*
+!.env.example
+!.env.*.example
+
+# Logs and OS files
 *.log
+.DS_Store
+Thumbs.db
+
+# Python generator cache
+__pycache__/
+*.pyc
+
+# Local editor settings
+.idea/
+.vscode/
